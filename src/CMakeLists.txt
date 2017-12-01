@@ -2,7 +2,9 @@ set(_srcs mikata.cpp kinematics.cpp )
 
 set(test_srcs test.cpp ${_srcs})
 set(kinetest_srcs kinematics_test.cpp ${_srcs})
-set(unit_src unit_test.cpp ${_srcs})
+set(unit_srcs unit_test.cpp ${_srcs})
+
+find_package(cpputest REQUIRED)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libdynamixel/include)
@@ -22,10 +24,11 @@ target_link_libraries(${PROJECT_NAME}_test ${CMAKE_THREAD_LIBS_INIT} ${ADDITIONA
 add_executable(kinematics_test ${kinetest_srcs})
 target_link_libraries(kinematics_test ${CMAKE_THREAD_LIBS_INIT} ${ADDITIONAL_LIBRARY})
 
-#if (BUILD_TEST)
-add_executable(kinematics_test ${kinetest_srcs})
-target_link_libraries(kinematics_test ${CMAKE_THREAD_LIBS_INIT} ${ADDITIONAL_LIBRARY})
-#endif (BUilD_TEST)
+if (BUILD_TEST)
+message(${CppUTest_LIBRARY})
+add_executable(unit_test ${unit_srcs})
+target_link_libraries(unit_test ${CMAKE_THREAD_LIBS_INIT} ${ADDITIONAL_LIBRARY} ${CppUTest_LIBRARY} ${CppUTest_EXT_LIBRARY})
+endif (BUILD_TEST)
 
 if(WIN32)
  set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/NODEFAULTLIB:\"LIBCMT.LIB\"")
