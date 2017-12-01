@@ -70,10 +70,13 @@ std::vector<double> inverse_kinematics(const Matrix44& mat);
 inline Vector3 MatrixToEulerZYZ(const Matrix44& hg) {
   Vector3 v;
   double c2 = hg.v[2][2];
-  if (c2 == 1.0) {
+  double e = 1.0e-5;
+  if (fabs(c2 - 1.0) < e) {
     v.v[0] = 0.0;
     v.v[1] = 0.0;
-    v.v[2] = atan2(hg.v[1][2], hg.v[0][2]);
+    //v.v[2] = atan2(hg.v[1][2], hg.v[0][2]);
+    double d = hg.v[0][0] + hg.v[1][1];
+    v.v[2] = acos(d/2);
     return v;
   }
 

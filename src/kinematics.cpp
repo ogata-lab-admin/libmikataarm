@@ -82,9 +82,10 @@ MATRIX44 mat_to_mat(const Matrix44& mat) {
 
 Matrix44 forward_kinematics(const std::vector<double> joints, int debug) {
   MATRIX44 jointMat[6];
+  double L23 = 170.1;
   jointMat[0] = RotTransZ(joints[0], 0, 0, 0);
   jointMat[1] = RotTransY(joints[1], 0, 0, L1);
-  jointMat[2] = RotTransY(joints[2], L3, 0, L2);
+  jointMat[2] = RotTransY(joints[2], 0, 0, L23);
   jointMat[3] = RotTransZ(joints[3], 0, 0, L4);
   jointMat[4] = RotTransY(joints[4], 0, 0, 0);
   jointMat[5] = RotTransZ(joints[5], 0, 0, L5);
@@ -113,12 +114,32 @@ std::vector<double> inverse_kinematics(const Matrix44& mat) {
   VECTOR4  p2(0, 0, L1, 0);
   VECTOR4  d25 = p5 - p2;
   double   D25 = d25.norm();
-  double th_offst = 1.42923183;
+  double   e = 1.0e-0;
+  //double th_offst = 1.42923183;
   double L23 = 170.1;
-  double th3 = M_PI*6/4 - acos((L23*L23 + L4*L4 - D25*D25) / 2 / L23 / L4) - th_offst;
-  double th1 = atan2(p5(1), p5(0));
-  double th2 = M_PI/2 - atan2(p5(2)-L1, sqrt(p5(0)*p5(0)+p5(1)*(p5(1))))
-    - acos((L23*L23 + D25*D25 - L4*L4) / 2 / L23 / D25) - (M_PI/2 - th_offst);
+  
+  double th3;
+  std::cout << "D25wow" << D25 << "/" << L23+L4<< std::endl;    
+  if (fabs(D25 - (L23+L4)) < 1.0e-10) {
+    th3 = 0;
+  } else {
+    th3 = M_PI - acos((L23*L23 + L4*L4 - D25*D25) / 2 / L23 / L4);// - th_offst;
+  }
+
+  double th1;
+  if (fabs(p5(0)) > e) {
+    th1 = atan2(p5(1), p5(0));
+  } else {
+    th1 = 0;
+  }
+
+  double th2;
+  if (fabs(D25 - (L23+L4)) < 1.0e-10) {
+    th2 = atan2(sqrt(p5(0)*p5(0)+p5(1)*(p5(1))), p5(2)-L1);//- (M_PI/2/* - th_offst*/);
+  } else {
+    th2 = atan2(sqrt(p5(0)*p5(0)+p5(1)*(p5(1))), p5(2)-L1)
+      - acos((L23*L23 + D25*D25 - L4*L4) / 2 / L23 / D25);// - (M_PI/2/* - th_offst*/);
+  }
   
   
   MATRIX44 mm = RotTransY(-th3, 0, 0, 0) * RotTransY(-th2, 0, 0, 0) * RotTransZ(-th1, 0, 0, 0) * m;

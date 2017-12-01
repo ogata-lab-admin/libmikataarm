@@ -20,6 +20,17 @@ int main(void) {
   std::cout << "\n";
   Matrix44 m = forward_kinematics(joints);
   std::cout << "Test[" << test_count++ <<"]" << std::endl << str(m) << std::endl;
+  std::vector<double> solved = inverse_kinematics(m);
+  std::cout << "Solved:";
+  for(int i = 0;i < 6;i++) {
+    std::cout << solved[i] << " ";
+  }
+  std::cout << "\n";
+  std::cout << "Delta :";
+  for(int i = 0;i < 6;i++) {
+    std::cout << fabs(joints[i] - solved[i]) << " ";
+  }
+  std::cout << "\n";
 
   joints[0] = M_PI/2;
   std::cout << "Joints:";
@@ -29,6 +40,17 @@ int main(void) {
   std::cout << "\n";
   m = forward_kinematics(joints);
   std::cout << "Test[" << test_count++ <<"]" << std::endl << str(m) << std::endl;
+  solved = inverse_kinematics(m);
+  std::cout << "Solved:";
+  for(int i = 0;i < 6;i++) {
+    std::cout << solved[i] << " ";
+  }
+  std::cout << "\n";
+  std::cout << "Delta :";
+  for(int i = 0;i < 6;i++) {
+    std::cout << fabs(joints[i] - solved[i]) << " ";
+  }
+  std::cout << "\n";
 
 
   joints[0] = 0;
@@ -40,6 +62,17 @@ int main(void) {
   std::cout << "\n";
   m = forward_kinematics(joints);
   std::cout << "Test[" << test_count++ <<"]" << std::endl << str(m) << std::endl;
+  solved = inverse_kinematics(m);
+  std::cout << "Solved:";
+  for(int i = 0;i < 6;i++) {
+    std::cout << solved[i] << " ";
+  }
+  std::cout << "\n";
+  std::cout << "Delta :";
+  for(int i = 0;i < 6;i++) {
+    std::cout << fabs(joints[i] - solved[i]) << " ";
+  }
+  std::cout << "\n";
 
 
   joints[0] = 0;
@@ -52,6 +85,17 @@ int main(void) {
   std::cout << "\n";
   m = forward_kinematics(joints);
   std::cout << "Test[" << test_count++ <<"]" << std::endl << str(m) << std::endl;
+  solved = inverse_kinematics(m);
+  std::cout << "Solved:";
+  for(int i = 0;i < 6;i++) {
+    std::cout << solved[i] << " ";
+  }
+  std::cout << "\n";
+  std::cout << "Delta :";
+  for(int i = 0;i < 6;i++) {
+    std::cout << fabs(joints[i] - solved[i]) << " ";
+  }
+  std::cout << "\n";
 
   joints[0] = 0;
   joints[2] = -M_PI/2;

@@ -15,7 +15,7 @@ int main(const int argc, const char* argv[]) {
   try {
     MikataArm m(argv[1], atoi(argv[2]));
     m.servoOn(false);
-    //m.goHome();
+    // m.goHome();
     
     for(int j = 0;j < 1000;j++) {
       std::vector<JointInfo> js = m.jointInfos();
