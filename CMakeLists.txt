@@ -36,7 +36,7 @@ endif(WIN32)
 
 # Subdirectories
 
-add_subdirectory(libarm)
+#add_subdirectory(libarm)
 add_subdirectory(libdynamixel)
 
 add_subdirectory(include)
