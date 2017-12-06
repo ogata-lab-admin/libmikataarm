@@ -1,0 +1,3 @@
+[submodule "libdynamixel"]
+	path = libdynamixel
+	url = https://github.com/sugarsweetrobotics/libdynamixel.git
