@@ -19,12 +19,63 @@
 #endif // ifdef WIN32
 
 #include <vector>
-
+#include <exception>
 #include "DynamixelV2.h"
 
 namespace ssr {
   namespace mikata {
+    class MikataException : public std::exception {
+    public:
+      MikataException() {
+	msg = "MikataException";
+      }
 
+      MikataException(const char* str) {
+	msg = "MikataException:";
+	msg += str;
+      }
+      virtual ~MikataException() throw() {}
+
+      const char* what() const throw() {
+	return msg.c_str();
+      }
+
+      std::string msg;
+    };
+
+    /**
+     *
+     */
+    class RangeException : public MikataException {
+    public:
+      RangeException(const char* str) : MikataException() {
+	msg = "RagneException:";
+	msg += str;
+      }
+      virtual ~RangeException() throw() {}
+    };
+
+    struct JointCommand {
+    public:
+      double angle;
+      double velocity;
+    public:
+    JointCommand() : angle(0), velocity(0) {}
+      void copyFrom(const JointCommand& cmd) {
+	angle = cmd.angle;
+	velocity = cmd.velocity;
+      }
+
+      JointCommand(const JointCommand& cmd) {
+	copyFrom(cmd);
+      }
+
+      void operator=(const JointCommand& cmd) {
+	copyFrom(cmd);
+      }
+
+      ~JointCommand() {}
+    };
 
     struct JointInfo {
     public:
@@ -51,24 +102,95 @@ namespace ssr {
 
 	
 
+    struct LimitValue {
+      double upper;
+      double lower;
+      LimitValue() : upper(0), lower(0) {}
+      LimitValue(double u, double l): upper(u), lower(l) {}
+      ~LimitValue() {}
+      LimitValue(const LimitValue& lv) {
+	copyFrom(lv);
+      }
+	
+      void copyFrom(const LimitValue& lv) {
+	upper = lv.upper;
+	lower = lv.lower;
+      }
+
+      void operator=(const LimitValue& lv) {
+	copyFrom(lv);
+      }
+
+    };
+
     static const uint32_t numJoints = 6;
 
+    /**
+     *
+     */
     class MikataArm {
-
-
     private:
       uint8_t m_IDs[numJoints];
+      uint8_t m_GripperID;
+
       double m_JointOffset[numJoints];
+      double m_GripperOffset;
       ssr::dynamixel::DynamixelV2 m_Dynamixel;      
+
+
+      LimitValue m_JointLimits[numJoints];
+      LimitValue m_GripperLimit;
     public: 
       MikataArm(const char* filename, const uint32_t baudrate);
       virtual ~MikataArm() ;
 
     public:
+      /**
+       * Get JointInformation
+       * @returns Vector of JointInfo struct
+       * @see JointInfo
+       */
       std::vector<JointInfo> jointInfos();
 
+      /**
+       * Set Servo ON or OFF of All Motors (Except Gripper)
+       * @param flag Servo ON if true, else Servo OFF.
+       */
       void servoOn(const bool flag = true);
+
+      /**
+       * Go to the Zero position of Arm
+       */
       void goHome();
+
+      /**
+       * Get JOint Information of Gripper
+       * @return JointInfo struct
+       * @see JointInfo
+       */
+      JointInfo gripper();
+
+      /**
+       * Set Servo ON/OFF of Gripper
+       * @param flag If true, Servo ON, else Servo OFF
+       */
+      void gripperServoOn(const bool flag = true);
+
+    public:
+      std::vector<LimitValue> getJointLimits() const;
+
+      void setJointLimits(std::vector<LimitValue>& lvs);
+      
+      LimitValue getGripperLimit() const;
+
+      void setGripperLimit(const LimitValue& lv);
+
+
+    public:
+      void move(const std::vector<JointCommand>& cmds);
+
+      void moveGripper(const JointCommand& cmd);
+      
     };
   };
 };

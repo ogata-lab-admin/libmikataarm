@@ -16,8 +16,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libdynamixel/libaqua/include)
 find_package(Threads)
 
 set(ADDITIONAL_LIBRARY dynamixel)
-#add_library(${PROJECT_NAME} SHARED ${_srcs})
-#target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} ${ADDITIONAL_LIBRARY})
+add_library(${PROJECT_NAME} SHARED ${_srcs})
+target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} ${ADDITIONAL_LIBRARY})
 
 add_executable(${PROJECT_NAME}_test ${test_srcs})
 target_link_libraries(${PROJECT_NAME}_test ${CMAKE_THREAD_LIBS_INIT} ${ADDITIONAL_LIBRARY})
