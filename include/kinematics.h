@@ -67,6 +67,7 @@ inline std::string str(const Matrix44& m) {
 
 Matrix44 forward_kinematics(const std::vector<double> pos, int debug = 0);
 std::vector<double> inverse_kinematics(const Matrix44& mat);
+
 inline Vector3 MatrixToEulerZYZ(const Matrix44& hg) {
   Vector3 v;
   double c2 = hg.v[2][2];
@@ -89,6 +90,9 @@ inline Vector3 MatrixToEulerZYZ(const Matrix44& hg) {
   v.v[2] = atan2(hg.v[2][1], -hg.v[2][0]);
   return v;
 }
+
+
+
 
 inline std::string str(const Vector3& v) {
   std::stringstream ss;

@@ -55,6 +55,16 @@ namespace ssr {
       virtual ~RangeException() throw() {}
     };
 
+
+    class TimeoutException : public MikataException {
+    public:
+      TimeoutException(const char* str) : MikataException() {
+	msg = "TimeoutException:";
+	msg += str;
+      }
+      virtual ~TimeoutException() throw() {}
+    };
+
     struct JointCommand {
     public:
       double angle;
@@ -190,7 +200,16 @@ namespace ssr {
       void move(const std::vector<JointCommand>& cmds);
 
       void moveGripper(const JointCommand& cmd);
+
+      void waitAttained(const long timeoutMS);
       
+      void waitGripperAttained(const long timeoutMS);
+
+      void openGripper();
+      void closeGripper();
+      void moveGripper(const double ratio);
+
+      void setVelocityRatio(const double ratio);
     };
   };
 };

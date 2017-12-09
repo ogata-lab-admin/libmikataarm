@@ -11,13 +11,13 @@
 static const double jointLimitValues[][2] = {
   {-M_PI/2, M_PI/2},
   {-M_PI/2, M_PI/2},
-  {-M_PI/2, M_PI/2},
+  {0, M_PI},
   {-M_PI/2, M_PI/2},
   {-M_PI/2, M_PI/2},
   {-M_PI/2, M_PI/2}
 };
 
-static const double gripperLimitValue[2] = {-M_PI/2, M_PI};
+static const double gripperLimitValue[2] = {-1.0, 0.1};
 
 using namespace ssr::mikata;
 using namespace ssr::dynamixel;
@@ -41,8 +41,8 @@ MikataArm::MikataArm(const char* filename, const uint32_t baudrate) :m_Dynamixel
   m_GripperLimit.upper = gripperLimitValue[1];
 
   m_JointOffset[0] = M_PI;
-  m_JointOffset[1] = M_PI;
-  m_JointOffset[2] = M_PI;
+  m_JointOffset[1] = M_PI - M_PI/2 + 1.42923183;
+  m_JointOffset[2] = M_PI - 1.42923183;
   m_JointOffset[3] = M_PI;
   m_JointOffset[4] = M_PI;
   m_JointOffset[5] = M_PI;
@@ -160,5 +160,78 @@ void MikataArm::moveGripper(const JointCommand& cmd) {
   m_Dynamixel.MovePosition(m_GripperID, rad_to_pos(angle + m_GripperOffset));
 }
 
+void MikataArm::openGripper() {
+  JointCommand cmd;
+  cmd.angle = m_GripperLimit.lower;
+  this->moveGripper(cmd);
+}
+
+void MikataArm::closeGripper() {
+  JointCommand cmd;
+  cmd.angle = m_GripperLimit.upper;
+  this->moveGripper(cmd);
+}
+
+void MikataArm::moveGripper(const double ratio) {
+  double r = ratio;
+  if (ratio > 1.0) r = 1.0;
+  else if (ratio < 0.0) r = 0.0;
+  else r = ratio;
+
+  r = 1 - r;
+  JointCommand cmd;
+  cmd.angle = m_GripperLimit.lower + (m_GripperLimit.upper - m_GripperLimit.lower) * r;
+  moveGripper(cmd);
+}
+
+void MikataArm::waitAttained(const long timeoutMS) {
+  ssr::Timer timer;
+  timer.tick();
+  while(true) {
+    int wait_count = 0;  
+    for(int i = 0;i < 6;i++) {
+      ssr::TimeSpec time;
+      timer.tack(&time);
+      if (time.getUsec() > timeoutMS*1000) {
+	throw TimeoutException("in MikataArm::waitAttained()");
+      }
+      
+      uint8_t status = m_Dynamixel.GetMovingStatus(m_IDs[i]);
+      if (status & MOVINGSTATUS_INPOSITION) {
+	wait_count++;
+      }
+    }
+
+    if (wait_count == 6) {
+      break;
+    }
+  }
+}
 
 
+void MikataArm::waitGripperAttained(const long timeoutMS) {
+  ssr::Timer timer;
+  timer.tick();
+  ssr::TimeSpec time;
+  timer.tack(&time);
+  while(true) {
+    if (time.getUsec() > timeoutMS*1000) {
+      throw TimeoutException("in MikataArm::waitAttained()");
+    }
+      
+    uint8_t status = m_Dynamixel.GetMovingStatus(m_GripperID);
+    if (status & MOVINGSTATUS_INPOSITION) {
+      break;
+    }
+  }
+}
+
+void MikataArm::setVelocityRatio(const double ratio) {
+  double r = ratio > 1.0 ? 1.0 : (ratio < 0.0 ? 0 : ratio);
+  for(int i = 0;i < 6;i++) {
+    uint32_t v = m_Dynamixel.GetVelocityLimit(m_IDs[i]);
+    m_Dynamixel.SetProfileVelocity(m_IDs[i], v * r);
+  }
+  uint32_t v = m_Dynamixel.GetVelocityLimit(m_GripperID);
+  m_Dynamixel.SetProfileVelocity(m_GripperID, v * r);
+}
