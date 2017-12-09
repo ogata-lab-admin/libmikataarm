@@ -7,10 +7,16 @@
 // ソースファイルがこのファイルを含んでいる他のプロジェクトは、 
 // LIBSSR_API 関数を DLL からインポートされたと見なすのに対し、この DLL は、このマクロで定義された
 // シンボルをエクスポートされたと見なします。
-#ifdef LIBMIKATA_EXPORTS
+#ifdef mikata_EXPORTS
 #define LIBSSR_API __declspec(dllexport)
 #else
+#ifdef EXPORT_mikata_STATIC
+#define EXPORT_dynamixel_STATIC
+#define LIBSSR_API 
+#else
 #define LIBSSR_API __declspec(dllimport)
+#endif
+
 #endif
 
 #else // ifdef WIN32
