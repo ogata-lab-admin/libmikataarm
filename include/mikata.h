@@ -216,6 +216,8 @@ namespace ssr {
       void moveGripper(const double ratio);
 
       void setVelocityRatio(const double ratio);
+
+	  void setAccelerationRatio(const double ratio);
     };
   };
 };
