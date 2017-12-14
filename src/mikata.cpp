@@ -195,11 +195,16 @@ void MikataArm::waitAttained(const long timeoutMS) {
       if (time.getUsec() > timeoutMS*1000) {
 	throw TimeoutException("in MikataArm::waitAttained()");
       }
-      
+	  /*
       uint8_t status = m_Dynamixel.GetMovingStatus(m_IDs[i]);
       if (status & MOVINGSTATUS_INPOSITION) {
 	wait_count++;
       }
+	  */
+	  uint8_t status = m_Dynamixel.GetMoving(m_IDs[i]);
+	  if (status == 0) {
+		  wait_count++;
+	  }
     }
 
     if (wait_count == 6) {
@@ -235,3 +240,15 @@ void MikataArm::setVelocityRatio(const double ratio) {
   uint32_t v = m_Dynamixel.GetVelocityLimit(m_GripperID);
   m_Dynamixel.SetProfileVelocity(m_GripperID, v * r);
 }
+
+
+void MikataArm::setAccelerationRatio(const double ratio) {
+	double r = ratio > 1.0 ? 1.0 : (ratio < 0.0 ? 0 : ratio);
+	for (int i = 0; i < 6; i++) {
+		uint32_t v = m_Dynamixel.GetAccelerationLimit(m_IDs[i]);
+		m_Dynamixel.SetProfileAcceleration(m_IDs[i], v * r);
+	}
+	uint32_t v = m_Dynamixel.GetAccelerationLimit(m_GripperID);
+	m_Dynamixel.SetProfileAcceleration(m_GripperID, v * r);
+}
+
