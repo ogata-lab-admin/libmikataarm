@@ -9,6 +9,8 @@ set(PROJECT_AUTHOR_SHORT "ssr")
 
 option(BUILD_TEST OFF)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # Set up installation directories
 set(BIN_INSTALL_DIR "bin")
 set(LIB_INSTALL_DIR "lib")
