@@ -155,6 +155,23 @@ void MikataArm::move(const std::vector<JointCommand>& cmds) {
 }
 
 
+std::vector<double> MikataArm::getJointCurrent() {
+  std::vector<double> ret;
+  for(int i = 0;i < 6;i++) {
+    short digit = m_Dynamixel.GetCurrentCurrent(m_IDs[i]);
+    ret.push_back(digit * 3.36);
+  }
+  return ret;
+}
+
+void MikataArm::setJointCurrent(const std::vector<double>& milliAmp) {
+  for(int i = 0;i < 6 && i < milliAmp.size();i++) {
+    short digit = static_cast<short>(milliAmp[i] / 3.36);
+    m_Dynamixel.SetTargetCurrent(m_IDs[i], digit);
+  }
+
+}
+
 void MikataArm::moveGripper(const JointCommand& cmd) {
   double angle = cmd.angle > m_GripperLimit.upper ? m_GripperLimit.upper : (cmd.angle < m_GripperLimit.lower ? m_GripperLimit.lower : cmd.angle);
   m_Dynamixel.MovePosition(m_GripperID, rad_to_pos(angle + m_GripperOffset));

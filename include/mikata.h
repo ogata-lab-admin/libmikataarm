@@ -201,7 +201,13 @@ namespace ssr {
 
       void setGripperLimit(const LimitValue& lv);
 
+      /**
+       * Returns Current Electric Current. [mA]
+       */
+      std::vector<double> getJointCurrent();
 
+      void setJointCurrent(const std::vector<double>& currentMA);
+      
     public:
       void move(const std::vector<JointCommand>& cmds);
 
