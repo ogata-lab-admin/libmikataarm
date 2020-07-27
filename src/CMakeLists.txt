@@ -2,6 +2,7 @@ set(_srcs mikata.cpp kinematics.cpp )
 
 set(test_srcs test.cpp ${_srcs})
 set(kinetest_srcs kinematics_test.cpp ${_srcs})
+set(mikata_selfweight_srcs selfweightcomp_test.cpp ${_srcs})
 set(mikata_kinetest_srcs mikata_kinematics_test.cpp ${_srcs})
 set(unit_srcs unit_test.cpp ${_srcs})
 
@@ -27,6 +28,9 @@ target_link_libraries(kinematics_test ${CMAKE_THREAD_LIBS_INIT} ${ADDITIONAL_LIB
 
 add_executable(mikata_kinematics_test ${mikata_kinetest_srcs})
 target_link_libraries(mikata_kinematics_test ${CMAKE_THREAD_LIBS_INIT} ${ADDITIONAL_LIBRARY})
+
+add_executable(mikata_selfweightcomp_test ${mikata_selfweight_srcs})
+target_link_libraries(mikata_selfweightcomp_test ${CMAKE_THREAD_LIBS_INIT} ${ADDITIONAL_LIBRARY})
 
 if (BUILD_TEST)
 # message(${CppUTest_LIBRARY})

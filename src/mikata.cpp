@@ -57,6 +57,7 @@ MikataArm::~MikataArm() {
 
 std::vector<JointInfo> MikataArm::jointInfos() {
   std::vector<JointInfo> joints;
+  std::vector<double> currents = getJointCurrent();
   for(int i = 0;i < 6;i++) {
     int32_t position = m_Dynamixel.GetCurrentPosition(m_IDs[i]);
 #ifdef DEBUG
@@ -68,7 +69,8 @@ std::vector<JointInfo> MikataArm::jointInfos() {
     std::cout << "]" << std::endl;
 #endif
     double angle = pos_to_rad(position) - m_JointOffset[i];
-    joints.push_back(JointInfo(angle));
+    double cur = currents[i];
+    joints.push_back(JointInfo(angle, cur));
 
   }
 
@@ -99,6 +101,29 @@ void MikataArm::servoOn(const bool flag) {
     } else {
       m_Dynamixel.TorqueDisable(m_IDs[i]);
     }
+  }
+}
+
+void MikataArm::servoOn(const int index, const bool flag) {
+  if (flag) {
+    m_Dynamixel.TorqueEnable(m_IDs[index]);
+  } else {
+    m_Dynamixel.TorqueDisable(m_IDs[index]);
+  }
+}
+
+void MikataArm::currentMode(const bool flag) {
+  for(int i = 0;i < numJoints;i++) {
+    currentMode(i, flag);
+  }
+}
+
+void MikataArm::currentMode(const int index, const bool flag) {
+  if (flag) {
+    m_Dynamixel.SetTargetCurrent(m_IDs[index], 0);
+    m_Dynamixel.SetOperatingMode(m_IDs[index], 0);
+  } Setelse {
+    m_Dynamixel.SetOperatingMode(m_IDs[index], 3);
   }
 }
 
@@ -135,6 +160,11 @@ void MikataArm::setJointLimits(std::vector<LimitValue>& lvs) {
   }
 }
 
+void MikataArm::setTargetCurrent(const int index, const double current) {
+  short digit = (short)(current / 3.36);
+  m_Dynamixel.SetTargetCurrent(m_IDs[index], digit);
+}
+
 LimitValue MikataArm::getGripperLimit() const {
   return m_GripperLimit;
 }
@@ -158,7 +188,10 @@ void MikataArm::move(const std::vector<JointCommand>& cmds) {
 std::vector<double> MikataArm::getJointCurrent() {
   std::vector<double> ret;
   for(int i = 0;i < 6;i++) {
+    //    std::cout << "Getting current...." << i <<  std::endl;
     short digit = m_Dynamixel.GetCurrentCurrent(m_IDs[i]);
+    //    short digit = m_Dynamixel.GetCurrentPosition(m_IDs[i]);
+    //    short digit = 0;
     ret.push_back(digit * 3.36);
   }
   return ret;

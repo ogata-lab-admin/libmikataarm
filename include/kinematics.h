@@ -65,7 +65,17 @@ inline std::string str(const Matrix44& m) {
   return ss.str();
 }
 
-Matrix44 forward_kinematics(const std::vector<double> pos, int debug = 0);
+
+class KinematicsState {
+public:
+  virtual ~KinematicsState() {}
+};
+
+Matrix44 jointMat(const std::shared_ptr<KinematicsState>& ks, const int index);
+Matrix44 jointMatAbs(const std::shared_ptr<KinematicsState>& ks, const int index);
+
+std::shared_ptr<KinematicsState> forward_kinematics_mat(const std::vector<double>& joints, int debug);
+Matrix44 forward_kinematics(const std::vector<double>& pos, int debug = 0);
 std::vector<double> inverse_kinematics(const Matrix44& mat);
 
 inline Vector3 MatrixToEulerZYZ(const Matrix44& hg) {
@@ -92,7 +102,32 @@ inline Vector3 MatrixToEulerZYZ(const Matrix44& hg) {
 }
 
 
+/**
+ * 自重補償のためのパラメータ
+ */
+class SelfWeightCompParam {
+public:
+  double m_[3]; // 各リンクの重量中心の大きさ [kg]
+  double l_[3]; // 重量中心から屈曲軸までの長さ[mm]
+  double K_[4];     // トルクと電流値とのゲイン [milliAmp / (kg mm)]
+  SelfWeightCompParam() {
+    m_[0] = 80;
+    m_[1] = 160;
+    m_[2] = 170; // [g]
 
+    l_[0] = 100;
+    l_[1] = 80;
+    l_[2] = 50;;
+
+    K_[0] = 0.01;
+    K_[1] = 0.01;
+    K_[2] = 0.01;
+    K_[3] = 0.01;    
+  }
+};
+
+
+std::vector<double> selfWeightComp(const SelfWeightCompParam& param, const std::shared_ptr<KinematicsState>& kinematics);
 
 inline std::string str(const Vector3& v) {
   std::stringstream ss;
@@ -101,3 +136,6 @@ inline std::string str(const Vector3& v) {
      << " [" << v.v[2] << "]";
   return ss.str();
 }
+
+
+

@@ -96,9 +96,11 @@ namespace ssr {
     struct JointInfo {
     public:
       double angle;
+      double current;
     public:
-    JointInfo() : angle(0) {}
-    JointInfo(double a): angle(a) {}
+      JointInfo() : angle(0), current(0) {}
+      JointInfo(double a): angle(a), current(0) {}
+      JointInfo(double a, double c): angle(a), current(c) {}
       ~JointInfo() {}
 
     public:
@@ -108,6 +110,7 @@ namespace ssr {
 
       void copyFrom(const JointInfo& i) {
 	angle = i.angle;
+	current = i.current;
       }
 
       void operator=(const JointInfo& i) {
@@ -174,6 +177,11 @@ namespace ssr {
        */
       void servoOn(const bool flag = true);
 
+      void servoOn(const int index, const bool flag = true);
+
+      void currentMode(const bool flag = true);
+
+      void currentMode(const int index, const bool flag = true);
       /**
        * Go to the Zero position of Arm
        */
@@ -201,6 +209,7 @@ namespace ssr {
 
       void setGripperLimit(const LimitValue& lv);
 
+      void setTargetCurrent(const int index, const double current);
       /**
        * Returns Current Electric Current. [mA]
        */

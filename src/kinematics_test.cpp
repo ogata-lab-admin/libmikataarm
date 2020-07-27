@@ -13,6 +13,7 @@ int main(void) {
   joints.push_back(0);
   joints.push_back(0);
   joints.push_back(0);
+  std::cout << "--------------------------" << std::endl;
   std::cout << "Joints:";
   for(int i = 0;i < 6;i++) {
     std::cout << joints[i] << " ";
@@ -21,17 +22,18 @@ int main(void) {
   Matrix44 m = forward_kinematics(joints);
   std::cout << "Test[" << test_count++ <<"]" << std::endl << str(m) << std::endl;
   std::vector<double> solved = inverse_kinematics(m);
-  std::cout << "Solved:";
+  std::cout << "IK Solved:";
   for(int i = 0;i < 6;i++) {
     std::cout << solved[i] << " ";
   }
   std::cout << "\n";
-  std::cout << "Delta :";
+  std::cout << "IK ERROR Delta :";
   for(int i = 0;i < 6;i++) {
     std::cout << fabs(joints[i] - solved[i]) << " ";
   }
   std::cout << "\n";
 
+  std::cout << "--------------------------" << std::endl;
   joints[0] = M_PI/2;
   std::cout << "Joints:";
   for(int i = 0;i < 6;i++) {
@@ -52,7 +54,7 @@ int main(void) {
   }
   std::cout << "\n";
 
-
+  std::cout << "--------------------------" << std::endl;
   joints[0] = 0;
   joints[2] = M_PI/2;
   std::cout << "Joints:";
@@ -75,6 +77,7 @@ int main(void) {
   std::cout << "\n";
 
 
+  std::cout << "--------------------------" << std::endl;
   joints[0] = 0;
   joints[2] = M_PI/2;
   joints[4] = M_PI/2;
@@ -97,6 +100,7 @@ int main(void) {
   }
   std::cout << "\n";
 
+  std::cout << "--------------------------" << std::endl;
   joints[0] = 0;
   joints[2] = -M_PI/2;
   joints[4] = M_PI/2;
@@ -110,7 +114,7 @@ int main(void) {
   std::cout << "Test[" << test_count++ <<"]" << std::endl << str(m) << std::endl;
   std::cout << "ZYZ:" << std::endl << str(MatrixToEulerZYZ(m)) << std::endl;
 
-
+  std::cout << "--------------------------" << std::endl;
   joints[0] = 0;
   joints[2] = M_PI/2;
   joints[4] = M_PI/4;
@@ -124,7 +128,7 @@ int main(void) {
   std::cout << "Test[" << test_count++ <<"]" << std::endl << str(m) << std::endl;
   std::cout << "ZYZ:" << std::endl << str(MatrixToEulerZYZ(m)) << std::endl;
 
-
+  std::cout << "--------------------------" << std::endl;
   joints[0] = 0;
   joints[2] = M_PI/2;
   joints[3] = M_PI/4;
@@ -139,6 +143,7 @@ int main(void) {
   std::cout << "Test[" << test_count++ <<"]" << std::endl << str(m) << std::endl;
   std::cout << "ZYZ:" << std::endl << str(MatrixToEulerZYZ(m)) << std::endl;
 
+  std::cout << "--------------------------" << std::endl;  
   joints[0] = M_PI/6;
   joints[2] = M_PI/2;
   joints[3] = M_PI/4;
@@ -153,7 +158,7 @@ int main(void) {
   std::cout << "Test[" << test_count++ <<"]" << std::endl << str(m) << std::endl;
   std::cout << "ZYZ:" << std::endl << str(MatrixToEulerZYZ(m)) << std::endl;
 
-
+  std::cout << "--------------------------" << std::endl;
   joints[0] = M_PI/6;
   joints[1] = M_PI/6;
   joints[2] = M_PI/2;
