@@ -220,7 +220,7 @@ std::vector<double> selfWeightComp(const SelfWeightCompParam& param, const std::
   auto abs4 = ks->jointMatAbs[4];
   auto abs3 = ks->jointMatAbs[3];  
   auto abs2 = ks->jointMatAbs[2];
-  auto abs1 = ks->jointMatAbs[2];  
+  auto abs1 = ks->jointMatAbs[1];  
   auto positionJ4 = abs4.block<4,1>(0,3);
   auto positionJ2 = abs2.block<4,1>(0,3);  
   auto positionJ1 = abs1.block<4,1>(0,3);
@@ -239,7 +239,7 @@ std::vector<double> selfWeightComp(const SelfWeightCompParam& param, const std::
   auto rotJ4 = abs4.block<3,3>(0,0);
   auto rotJ3 = abs3.block<3,3>(0,0);
   auto rotJ2 = abs2.block<3,3>(0,0);
-  auto rotJ1 = abs2.block<3,3>(0,0);
+  auto rotJ1 = abs1.block<3,3>(0,0);
   
   //std::cout << "rM3_J4:" << rM3_J4 << std::endl;
 

@@ -122,7 +122,7 @@ void MikataArm::currentMode(const int index, const bool flag) {
   if (flag) {
     m_Dynamixel.SetTargetCurrent(m_IDs[index], 0);
     m_Dynamixel.SetOperatingMode(m_IDs[index], 0);
-  } Setelse {
+  } else {
     m_Dynamixel.SetOperatingMode(m_IDs[index], 3);
   }
 }
