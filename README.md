@@ -7,8 +7,8 @@ Library for Mikata Arm by ROBOTIS Japan
 
 
 ```
-$ git clone https://github.com/ogata-lab/libmikata
-$ cd libmikata
+$ git clone https://github.com/ogata-lab/libmikataarm
+$ cd libmikataarm
 $ git submodule update --init --recursive
 $ mkdir build
 $ cd build
